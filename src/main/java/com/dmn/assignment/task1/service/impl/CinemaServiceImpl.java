@@ -46,9 +46,12 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
         cinemaRoomRepository.save(cinemaRoom);
         if (isResetReservation)
             reservedSeatRepository.deleteByRoom(cinemaRoom);
+
+        rebuildSeatMap();
     }
 
     public List<SeatInfo> getAvailableSeats(int neededSeatCount) {
+        // get available-marked seats from map
         return Lists.newArrayList(SeatInfo.builder()
                                           .rowNumber(1).seatNumber(2)
                                           .build(),
@@ -58,7 +61,20 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
     }
 
     public void reserveSeats(List<Seat> needReservingSeats) {
-        // Tim cac seat ngoi cung nhau -> tim ra so ghe canh nhau max
-        // goi den availableSeats -> neu ds seats can reserve co thuoc available ko?
+        // lock the cinema room
+        // check needReservingSeats exist in seats from getAvailableSeats
+        // reserve seats
+        updateSeatMap();
+    }
+
+    private void updateSeatMap() {
+        // update seat matrix with new reserved seats
+    }
+
+    private void rebuildSeatMap() {
+        // build a seat matrix of room that contains seats in
+        // - reserved: from reserved seats
+        // - prohibited: has mahattan distance < allowedDistance (calculated from reserved
+        // - available: the rest
     }
 }
