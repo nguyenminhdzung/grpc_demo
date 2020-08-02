@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service()
+@Service
 @Transactional
 public class CinemaServiceImpl extends BaseService implements CinemaService {
 
