@@ -1,0 +1,40 @@
+syntax = "proto3";
+option java_multiple_files = true;
+//import "google/protobuf/empty.proto";
+package com.dmn.assignment.task1.endpoint;
+
+message ResultResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message CinemaRoomConfigRequest {
+    string name = 1;
+    int32 rows = 2;
+    int32 seatsPerRow = 3;
+    int32 allowedDistance = 4;
+    bool resetReservation = 5;
+}
+
+message AvailableSeatsRequest {
+    int32 neededSeatCount = 1;
+}
+
+message AvailableSeatsResponse {
+    repeated Seat seats = 1;
+}
+
+message Seat {
+    int32 rowNumber = 1;
+    int32 seatNumber = 2;
+}
+
+message ReserveSeatsRequest {
+    repeated Seat seats = 1;
+}
+
+service CinemaEndpoint {
+    rpc configRoom(CinemaRoomConfigRequest) returns (ResultResponse);
+    rpc getAvailableSeats(AvailableSeatsRequest) returns (AvailableSeatsResponse);
+    rpc reserveSeats(ReserveSeatsRequest) returns (ResultResponse);
+}
