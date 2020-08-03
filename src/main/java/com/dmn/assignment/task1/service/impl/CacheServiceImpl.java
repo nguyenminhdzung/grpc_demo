@@ -8,7 +8,7 @@ import java.util.Map;
 
 /***
  * NOTE: For demo purpose, this is a simple in-memory cache implementation.
- *       In production, this should use a distributed cache such as Redis.
+ *       In production, this should use a high performance distributed cache such as Redis.
  */
 @Service
 public class CacheServiceImpl implements CacheService {

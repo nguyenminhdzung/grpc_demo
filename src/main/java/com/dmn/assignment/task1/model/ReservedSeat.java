@@ -1,6 +1,5 @@
 package com.dmn.assignment.task1.model;
 
-import com.dmn.assignment.task1.model.keys.SeatId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
