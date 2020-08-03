@@ -2,14 +2,14 @@ package com.dmn.assignment.task1.service.impl.seatmap;
 
 import com.dmn.assignment.task1.model.CinemaRoom;
 import com.dmn.assignment.task1.service.SeatInfo;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 public class SeatMap {
+    @Getter
     private String roomName;
     private int allowedDistance;
     private SeatStatus[][] statusMatrix;
