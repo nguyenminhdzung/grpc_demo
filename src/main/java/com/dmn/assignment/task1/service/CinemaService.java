@@ -5,7 +5,7 @@ import com.dmn.assignment.task1.endpoint.Seat;
 import java.util.List;
 
 public interface CinemaService {
-    void configCinemaRoom(String name, int rows, int seatsPerRow, int minDistance, boolean isResetReservation);
-    List<SeatInfo> getAvailableSeats(int neededSeatCount);
-    void reserveSeats(List<Seat> needReservingSeats);
+    void configCinemaRoom(String name, int rows, int seatsPerRow, int minDistance);
+    List<SeatInfo> getAvailableSeats(String roomName, int neededSeatCount);
+    void reserveSeats(String roomName, List<Seat> needReservingSeats);
 }

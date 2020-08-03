@@ -13,11 +13,11 @@ message CinemaRoomConfigRequest {
     int32 rows = 2;
     int32 seatsPerRow = 3;
     int32 allowedDistance = 4;
-    bool resetReservation = 5;
 }
 
 message AvailableSeatsRequest {
-    int32 neededSeatCount = 1;
+    string roomName = 1;
+    int32 neededSeatCount = 2;
 }
 
 message AvailableSeatsResponse {
@@ -30,7 +30,8 @@ message Seat {
 }
 
 message ReserveSeatsRequest {
-    repeated Seat seats = 1;
+    string roomName = 1;
+    repeated Seat seats = 2;
 }
 
 service CinemaEndpoint {

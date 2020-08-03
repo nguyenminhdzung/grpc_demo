@@ -29,8 +29,8 @@ public class CinemaEndpoint extends CinemaEndpointGrpc.CinemaEndpointImplBase {
 
         try {
             cinemaService.configCinemaRoom(request.getName(),
-                                           request.getRows(), request.getSeatsPerRow(), request.getAllowedDistance(),
-                                           request.getResetReservation());
+                                           request.getRows(), request.getSeatsPerRow(),
+                                           request.getAllowedDistance());
 
             log.info("ConfigRoom  succeeded.");
 
@@ -56,7 +56,7 @@ public class CinemaEndpoint extends CinemaEndpointGrpc.CinemaEndpointImplBase {
     public void getAvailableSeats(AvailableSeatsRequest request, StreamObserver<AvailableSeatsResponse> responseObserver) {
         log.info("GetAvailableSeats received input: '{}'.", request.toString());
 
-        List<SeatInfo> availableSeats = cinemaService.getAvailableSeats(request.getNeededSeatCount());
+        List<SeatInfo> availableSeats = cinemaService.getAvailableSeats(request.getRoomName(), request.getNeededSeatCount());
 
         AvailableSeatsResponse response
                 = AvailableSeatsResponse.newBuilder()
@@ -78,7 +78,7 @@ public class CinemaEndpoint extends CinemaEndpointGrpc.CinemaEndpointImplBase {
         ResultResponse.Builder responseBuilder = ResultResponse.newBuilder();
 
         try {
-            cinemaService.reserveSeats(request.getSeatsList());
+            cinemaService.reserveSeats(request.getRoomName(), request.getSeatsList());
 
             log.info("ReserveSeats  succeeded.");
 
