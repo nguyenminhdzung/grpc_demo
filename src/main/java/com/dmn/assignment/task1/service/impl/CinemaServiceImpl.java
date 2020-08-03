@@ -1,6 +1,5 @@
 package com.dmn.assignment.task1.service.impl;
 
-import com.dmn.assignment.task1.endpoint.Seat;
 import com.dmn.assignment.task1.exception.CinemaException;
 import com.dmn.assignment.task1.model.CinemaRoom;
 import com.dmn.assignment.task1.model.ReservedSeat;
@@ -10,11 +9,11 @@ import com.dmn.assignment.task1.service.CacheService;
 import com.dmn.assignment.task1.service.CinemaService;
 import com.dmn.assignment.task1.service.SeatInfo;
 import com.dmn.assignment.task1.service.impl.seatmap.SeatMap;
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,24 +63,45 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
             throw new CinemaException("Room doesn't exist.");
 
         SeatMap seatMap = getSeatMap(cinemaRoom);
-        return seatMap.getAvailableSeats();
+        List<SeatInfo> availableSeats = seatMap.getAvailableSeats();
 
+        if (availableSeats == null || availableSeats.size() < neededSeatCount)
+            throw new CinemaException("There are less than " + neededSeatCount + " available seats");
+
+        return availableSeats;
     }
 
-    public void reserveSeats(String roomName, List<Seat> needReservingSeats) {
+    public void reserveSeats(String roomName, List<SeatInfo> needReservingSeats) {
         CinemaRoom cinemaRoom = cinemaRoomRepository.findFirstByName(roomName);
         if (cinemaRoom == null)
             throw new CinemaException("Room doesn't exist.");
 
         lockForUpdate(cinemaRoom);
+        SeatMap seatMap = getSeatMap(cinemaRoom);
 
-        // check needReservingSeats exist in seats from getAvailableSeats
-        // reserve seats
-        updateSeatMap();
+        List<SeatInfo> unavailableSeats = seatMap.fetchUnavailableSeats(needReservingSeats);
+        if (unavailableSeats != null && unavailableSeats.size() > 0) {
+            String unavailableSeatsText = unavailableSeats.stream()
+                                                          .map(s -> String.format("[%d, %d]", s.getRowNumber(), s.getSeatNumber()))
+                                                          .collect(Collectors.joining(", "));
+            throw new CinemaException("Seats are not available for reserving: " + unavailableSeatsText);
+        }
+
+        for (SeatInfo seat : needReservingSeats) {
+            reservedSeatRepository.save(ReservedSeat.builder()
+                                                    .room(cinemaRoom)
+                                                    .rowNumber(seat.getRowNumber())
+                                                    .seatNumber(seat.getSeatNumber())
+                                                    .reservedTime(new Date())
+                                                    .build());
+        }
+
+        updateSeatMap(seatMap, needReservingSeats);
     }
 
-    private void updateSeatMap() {
-        // update seat matrix with new reserved seats
+    private void updateSeatMap(SeatMap seatMap, List<SeatInfo> reservedSeats) {
+        seatMap.markSeatReserved(reservedSeats);
+        cacheService.updateItem(seatMap.getRoomName(), seatMap);
     }
 
     private SeatMap rebuildSeatMap(CinemaRoom room) {

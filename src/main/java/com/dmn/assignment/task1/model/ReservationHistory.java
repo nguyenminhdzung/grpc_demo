@@ -32,7 +32,7 @@ public class ReservationHistory implements Serializable {
     private int seatNumber;
 
     @Column(nullable = false)
-    private Date reservedDate;
+    private Date reservedTime;
 
     @Column(nullable = false)
     private String ticketClerk;

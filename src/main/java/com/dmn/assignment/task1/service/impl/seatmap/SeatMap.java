@@ -2,10 +2,13 @@ package com.dmn.assignment.task1.service.impl.seatmap;
 
 import com.dmn.assignment.task1.model.CinemaRoom;
 import com.dmn.assignment.task1.service.SeatInfo;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Data
 public class SeatMap {
     private String roomName;
     private int allowedDistance;
@@ -76,5 +79,14 @@ public class SeatMap {
                                                .build());
 
         return availableSeats;
+    }
+
+    public List<SeatInfo> fetchUnavailableSeats(List<SeatInfo> needReservingSeats) {
+        if (needReservingSeats == null || needReservingSeats.size() <= 0)
+            return needReservingSeats;
+
+        return needReservingSeats.stream()
+                                 .filter(s -> statusMatrix[s.getRowNumber()][s.getSeatNumber()] != SeatStatus.AVAILABLE)
+                                 .collect(Collectors.toList());
     }
 }

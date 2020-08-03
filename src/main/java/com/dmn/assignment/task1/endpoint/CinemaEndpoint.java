@@ -78,7 +78,13 @@ public class CinemaEndpoint extends CinemaEndpointGrpc.CinemaEndpointImplBase {
         ResultResponse.Builder responseBuilder = ResultResponse.newBuilder();
 
         try {
-            cinemaService.reserveSeats(request.getRoomName(), request.getSeatsList());
+            cinemaService.reserveSeats(request.getRoomName(),
+                                       request.getSeatsList().stream()
+                                                             .map(s -> SeatInfo.builder()
+                                                                               .rowNumber(s.getRowNumber())
+                                                                               .seatNumber(s.getSeatNumber())
+                                                                               .build())
+                                                             .collect(Collectors.toList()));
 
             log.info("ReserveSeats  succeeded.");
 
