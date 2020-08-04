@@ -9,6 +9,7 @@ import com.dmn.assignment.task1.service.CacheService;
 import com.dmn.assignment.task1.service.CinemaService;
 import com.dmn.assignment.task1.service.SeatInfo;
 import com.dmn.assignment.task1.service.impl.seatmap.SeatMap;
+import com.dmn.assignment.task1.utility.Guards;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,10 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
     private CacheService cacheService;
 
     public void configCinemaRoom(String name, int rows, int seatsPerRow, int minDistance) {
-        int allowedDistance = minDistance < 0 ? 0 : minDistance;
+        Guards.notNullOrEmpty(name, "Room name must not empty");
+        Guards.mustPositive(rows, "Row count must positive");
+        Guards.mustPositive(rows, "Seat count must positive");
+        Guards.mustPositive(rows, "Min distance must positive");
 
         CinemaRoom cinemaRoom = cinemaRoomRepository.findFirstByName(name);
         if (cinemaRoom == null) {
@@ -39,7 +43,7 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
                                    .name(name)
                                    .rows(rows)
                                    .seatsPerRow(seatsPerRow)
-                                   .allowedDistance(allowedDistance)
+                                   .allowedDistance(minDistance)
                                    .build();
         } else {
             lockForUpdate(cinemaRoom);
@@ -47,7 +51,7 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
             cinemaRoom.setName(name);
             cinemaRoom.setRows(rows);
             cinemaRoom.setSeatsPerRow(seatsPerRow);
-            cinemaRoom.setAllowedDistance(allowedDistance);
+            cinemaRoom.setAllowedDistance(minDistance);
         }
 
         cinemaRoomRepository.save(cinemaRoom);
