@@ -56,18 +56,25 @@ public class CinemaEndpoint extends CinemaEndpointGrpc.CinemaEndpointImplBase {
     public void getAvailableSeats(AvailableSeatsRequest request, StreamObserver<AvailableSeatsResponse> responseObserver) {
         log.info("GetAvailableSeats received input: '{}'.", request.toString());
 
-        List<SeatInfo> availableSeats = cinemaService.getAvailableSeats(request.getRoomName(), request.getNeededSeatCount());
+        try {
+            List<SeatInfo> availableSeats = cinemaService.getAvailableSeats(request.getRoomName(),
+                    request.getNeededSeatCount());
 
-        AvailableSeatsResponse response
-                = AvailableSeatsResponse.newBuilder()
-                                        .addAllSeats(availableSeats.stream().map(s -> Seat.newBuilder()
-                                                                                          .setRowNumber(s.getRowNumber())
-                                                                                          .setSeatNumber(s.getSeatNumber())
-                                                                                          .build())
-                                                                            .collect(Collectors.toList()))
-                                        .build();
+            AvailableSeatsResponse response
+                    = AvailableSeatsResponse.newBuilder()
+                                            .addAllSeats(availableSeats.stream()
+                                                                       .map(s -> Seat.newBuilder()
+                                                                                     .setRowNumber(s.getRowNumber())
+                                                                                     .setSeatNumber(s.getSeatNumber())
+                                                                                     .build())
+                                                                       .collect(Collectors.toList()))
+                                            .build();
 
-        responseObserver.onNext(response);
+            responseObserver.onNext(response);
+        } catch (Exception ex) {
+            responseObserver.onError(ex);
+        }
+
         responseObserver.onCompleted();
     }
 

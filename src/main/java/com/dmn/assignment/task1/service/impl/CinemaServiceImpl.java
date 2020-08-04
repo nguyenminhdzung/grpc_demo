@@ -32,10 +32,10 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
     private CacheService cacheService;
 
     public void configCinemaRoom(String name, int rows, int seatsPerRow, int minDistance) {
-        Guards.notNullOrEmpty(name, "Room name must not empty");
-        Guards.mustPositive(rows, "Row count must positive");
-        Guards.mustPositive(rows, "Seat count must positive");
-        Guards.mustPositive(rows, "Min distance must positive");
+        Guards.notNullOrEmpty(name, "Room name must be not empty");
+        Guards.mustPositive(rows, "Row count must be positive");
+        Guards.mustPositive(rows, "Seat count must be positive");
+        Guards.mustPositive(rows, "Min distance must be positive");
 
         CinemaRoom cinemaRoom = cinemaRoomRepository.findFirstByName(name);
         if (cinemaRoom == null) {
@@ -62,6 +62,9 @@ public class CinemaServiceImpl extends BaseService implements CinemaService {
     }
 
     public List<SeatInfo> getAvailableSeats(String roomName, int neededSeatCount) {
+        Guards.notNullOrEmpty(roomName, "Room name must be not empty");
+        Guards.mustPositive(neededSeatCount, "Seat count must be positive");
+
         CinemaRoom cinemaRoom = cinemaRoomRepository.findFirstByName(roomName);
         if (cinemaRoom == null)
             throw new CinemaException("Room doesn't exist.");
