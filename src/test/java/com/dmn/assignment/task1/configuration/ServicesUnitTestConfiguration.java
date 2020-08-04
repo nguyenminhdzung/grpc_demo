@@ -13,7 +13,7 @@ public class ServicesUnitTestConfiguration {
         return Mockito.mock(CinemaService.class);
     }
 
-    @Bean
+    @Bean("testCinemaEndpoint")
     public CinemaEndpoint cinemaEndpoint() {
         return new CinemaEndpoint();
     }

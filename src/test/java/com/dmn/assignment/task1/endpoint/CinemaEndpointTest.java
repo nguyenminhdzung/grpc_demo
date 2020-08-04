@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -22,10 +23,12 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest
 @SpringJUnitConfig(classes = { ServicesUnitTestConfiguration.class })
 public class CinemaEndpointTest {
+
     @Autowired
     private CinemaService cinemaService;
 
     @Autowired
+    @Qualifier("testCinemaEndpoint")
     private CinemaEndpoint cinemaEndpoint;
 
     /** ConfigRoom **/
